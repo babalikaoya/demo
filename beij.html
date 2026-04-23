@@ -1,2 +1,455 @@
-demm
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>沸点工作室</title>
+  <style>
+    :root {
+      --bg: #f3efe6;
+      --paper: rgba(255, 252, 245, 0.78);
+      --ink: #182126;
+      --muted: #5d676e;
+      --accent: #ff6a3d;
+      --accent-deep: #d54a23;
+      --sea: #0f766e;
+      --line: rgba(24, 33, 38, 0.08);
+      --shadow: 0 24px 70px rgba(24, 33, 38, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(255, 106, 61, 0.18), transparent 28%),
+        radial-gradient(circle at 85% 15%, rgba(15, 118, 110, 0.18), transparent 26%),
+        linear-gradient(135deg, #f7f1e7 0%, #ebe5d9 100%);
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(24, 33, 38, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(24, 33, 38, 0.03) 1px, transparent 1px);
+      background-size: 32px 32px;
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), transparent 92%);
+      pointer-events: none;
+    }
+
+    .shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 24px auto 48px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 18px 22px;
+      background: var(--paper);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 16px;
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+      box-shadow: 0 12px 28px rgba(213, 74, 35, 0.35);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s ease;
+    }
+
+    .nav a:hover {
+      color: var(--ink);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 28px;
+      margin-top: 24px;
+    }
+
+    .panel {
+      background: var(--paper);
+      border: 1px solid rgba(255, 255, 255, 0.66);
+      border-radius: 30px;
+      padding: 32px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 106, 61, 0.1);
+      color: var(--accent-deep);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 18px 0 16px;
+      font-size: clamp(40px, 7vw, 82px);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.75;
+      max-width: 42rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 22px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+      color: white;
+      box-shadow: 0 14px 30px rgba(213, 74, 35, 0.28);
+    }
+
+    .btn-secondary {
+      background: rgba(24, 33, 38, 0.06);
+      color: var(--ink);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .hero-card {
+      display: grid;
+      gap: 18px;
+    }
+
+    .stat {
+      padding: 22px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.68);
+      border: 1px solid var(--line);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 36px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      margin-top: 24px;
+    }
+
+    .card {
+      padding: 28px;
+      border-radius: 26px;
+      background: rgba(255, 252, 247, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.64);
+      box-shadow: var(--shadow);
+      transform: translateY(20px);
+      opacity: 0;
+      transition: transform 0.6s ease, opacity 0.6s ease;
+    }
+
+    .card.visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .card h3 {
+      margin: 18px 0 12px;
+      font-size: 22px;
+    }
+
+    .card p,
+    .feature-list li,
+    .footer-note {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      background: linear-gradient(135deg, rgba(255, 106, 61, 0.16), rgba(15, 118, 110, 0.18));
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 22px;
+      margin-top: 24px;
+    }
+
+    .feature-list {
+      padding-left: 18px;
+      margin: 18px 0 0;
+    }
+
+    .feature-list li + li {
+      margin-top: 10px;
+    }
+
+    .quote {
+      padding: 32px;
+      border-radius: 28px;
+      background: linear-gradient(135deg, #14363a, #1b575a);
+      color: #edf7f6;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 28px 60px rgba(20, 54, 58, 0.24);
+    }
+
+    .quote p {
+      color: rgba(237, 247, 246, 0.82);
+      font-size: 17px;
+    }
+
+    .quote strong {
+      display: block;
+      font-size: 18px;
+      margin-top: 24px;
+    }
+
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      padding: 26px 16px 12px;
+    }
+
+    .footer-note {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .grid,
+      .split {
+        grid-template-columns: 1fr;
+      }
+
+      .nav {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        width: min(100% - 20px, 1120px);
+        margin-top: 12px;
+      }
+
+      .panel,
+      .card,
+      .quote {
+        padding: 22px;
+        border-radius: 24px;
+      }
+
+      .nav {
+        padding: 16px;
+        border-radius: 18px;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <nav class="nav">
+      <div class="brand">
+        <div class="brand-mark">F</div>
+        <span>Focal Studio</span>
+      </div>
+      <div class="nav-links">
+        <a href="#services">服务</a>
+        <a href="#about">理念</a>
+        <a href="#contact">联系</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="panel">
+        <span class="eyebrow">Creative Web Landing</span>
+        <h1>把普通页面<br>做成有气场的作品</h1>
+        <p>
+          这是一个为你直接生成的单页网页示例，主打清晰信息结构、轻质感玻璃卡片和更鲜明的视觉节奏。
+          适合当作工作室主页、产品介绍页或个人展示页起点。
+        </p>
+        <div class="actions">
+          <a class="btn btn-primary" href="#contact">开始使用</a>
+          <a class="btn btn-secondary" href="#services">查看模块</a>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <div class="panel stat">
+          <strong>01</strong>
+          <span>单文件结构，直接双击就能在浏览器打开</span>
+        </div>
+        <div class="panel stat">
+          <strong>100%</strong>
+          <span>响应式布局，兼顾手机和桌面端浏览体验</span>
+        </div>
+        <div class="panel stat">
+          <strong>Live</strong>
+          <span>带入场动画和滚动显现效果，页面更有呼吸感</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="services" class="grid">
+      <article class="card">
+        <div class="icon">A</div>
+        <h3>视觉主舞台</h3>
+        <p>大标题、层次背景和高对比按钮让首屏更容易留下记忆点，而不是普通模板的平铺排版。</p>
+      </article>
+      <article class="card">
+        <div class="icon">B</div>
+        <h3>内容可扩展</h3>
+        <p>区块结构已经拆分好，后续你只需要替换文案，就能继续扩展产品、服务或案例内容。</p>
+      </article>
+      <article class="card">
+        <div class="icon">C</div>
+        <h3>轻量无依赖</h3>
+        <p>没有引入框架和第三方库，部署简单，适合先快速出效果，再决定是否接入业务逻辑。</p>
+      </article>
+    </section>
+
+    <section id="about" class="split">
+      <div class="panel">
+        <span class="eyebrow">Design Notes</span>
+        <h2>一个页面，也可以有完整节奏</h2>
+        <p class="footer-note">
+          我把这个页面做成了可直接复用的展示模板，重点不是堆很多内容，而是让信息、留白、色彩和动作配合起来。
+        </p>
+        <ul class="feature-list">
+          <li>首屏负责吸引注意，明确页面主题。</li>
+          <li>中段用三列卡片快速传达卖点。</li>
+          <li>底部区域留给品牌观点、联系信息或转化入口。</li>
+        </ul>
+      </div>
+
+      <aside class="quote" id="contact">
+        <div>
+          <span class="eyebrow" style="background: rgba(255,255,255,0.12); color: #edf7f6;">Ready</span>
+          <h2>下一步可以继续改成你的版本</h2>
+          <p>
+            如果你愿意，我可以继续把它改成公司官网、个人主页、产品落地页，或者直接补上表单、导航跳转和更多内容模块。
+          </p>
+        </div>
+        <strong>hello@focal-studio.demo</strong>
+      </aside>
+    </section>
+
+    <footer class="footer">
+      <p class="footer-note">沸点工作室页面样例 · HTML / CSS / JavaScript 单文件实现</p>
+    </footer>
+  </div>
+
+  <script>
+    const cards = document.querySelectorAll(".card");
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    cards.forEach((card, index) => {
+      card.style.transitionDelay = `${index * 120}ms`;
+      observer.observe(card);
+    });
+  </script>
+</body>
+</html>
 
